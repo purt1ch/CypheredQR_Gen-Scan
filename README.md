@@ -54,7 +54,8 @@ I made 2 programms in pair: the qr-code scanner for Android and QR generator wic
         python3 CreatingQR_visual.py
     ```
 ## Android 
-* If you are scanning normal qr, not encrypted by the programm the botom button should show 'Шифрование выключено'. But if you're scanning encrypted by *crypto.py* qr-code, then use 'Шифрование включено' mode. *
+* If you are scanning normal qr, not encrypted by the programm the botom button should show 'Шифрование выключено'.
+* But if you're scanning encrypted by *crypto.py* qr-code, then use 'Шифрование включено' mode. 
 ## Projects
 * Here's a list of the projects included in this repository:
 
