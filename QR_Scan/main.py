@@ -1,5 +1,4 @@
 import webbrowser
-
 from kivy.app import App
 from kivy.uix.screenmanager import ScreenManager, Screen
 from kivy.uix.label import Label
@@ -26,47 +25,49 @@ class MainScreen(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.orientation = ('vertical')
-        # Добавляем камеру в UI
+        # Adding camera to UI
         self.cam = Camera(play=True, resolution=(1280, 720))
         self.add_widget(self.cam)
 
-        # Кнопки управления
-        self.stopbut = ToggleButton(text='Съёмка', state='down', size_hint_y=None, height='48dp', on_press=self.change_state)
-        self.cyphbut = ToggleButton(text='Шифрование Выключено', size_hint_y=None, height='48dp', on_press=self.toggle_crypto)
+        # UI Buttons
+        self.stopbut = ToggleButton(text='Camera: ON', state='down', size_hint_y=None, height='48dp', on_press=self.change_state)
+        self.cyphbut = ToggleButton(text='Encryption: OFF', size_hint_y=None, height='48dp', on_press=self.toggle_crypto)
 
         self.add_widget(self.stopbut)
         self.add_widget(self.cyphbut)
 
-        # Запускаем обновление кадров
+        # Screen refresh rate
         Clock.schedule_interval(self.update, 1.0 / 30)
 
     def update(self, dt):
         # if self.cam.texture:
-        #     print("Текстура получена!")  # Проверка работы
+        #     print("We got texture!")  # Checking whether the cam is working
         global weblink, elements
-        # Создаем новую текстуру
+        # Creating texture
         texture = self.cam.texture
         size = texture.size
         pixels = texture.pixels
 
-        # Проверяем, есть ли пиксели
+        # Checking whether we got pixels
         if not pixels:
-            print("Ошибка: Пустые пиксели!")
+            print("Error: Null pixels!")
             return
 
-        # Преобразуем в NumPy
+        # Reorganize using NumPy
         frame = np.frombuffer(pixels, dtype=np.uint8).reshape(size[1], size[0], 4)  # (H, W, 4) - RGBA
-        # Конвертируем в BGR
+        # Convert to BGR
         frame = cv2.cvtColor(frame, cv2.COLOR_RGBA2RGB)
         frame = cv2.flip(frame, 1)
-        # Декодируем штрих-коды
-        barcodes = decode(frame)
-        for barcode in barcodes:
-            # x, y, w, h = barcode.rect  Для отображения текста над QR
+        # Decoding QR-codes
+        qrcodes = decode(frame)
+        for qrcode in qrcodes:
+            # x, y, w, h = qrcode.rect  # For displaying text above QR
             # cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            data = barcode.data.decode("utf-8")
+            data = qrcode.data.decode("utf-8")
             # cv2.putText(frame, text, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
             leb.text = data
+
+            # Decoding encrypted data and organizing it in list
             if togglcrypt == True:
                 data = decrypt(data)
                 elements = ['']
@@ -79,19 +80,18 @@ class MainScreen(BoxLayout):
                         n += 1
                         continue
                 print(elements)
-                data = f'<center> <table border="1" width="350" height="240"> <font size="+4">{elements[0]}</font></td><tr> <td align="centre"><h2>G8</td> <td><h2>{elements[1]}</td> <td><h2>(1920x1080)</td> </tr> <tr> <td><h2>{elements[2]}</td> <td><h2>{elements[3]}</td> <td><h2>{elements[4]}</td> </tr> <tr> <td><h2>SSD</td> <td><h2>{elements[5]}</td> <td><h2>FPR</td></h2> </tr></table> </center>'
             weblink = data
             self.change_screen()
 
 
     def change_state(self, *args):
-        """Остановка и запуск камеры"""
+        # Stopping and running camera
         global togglflag
         if togglflag:
-            self.stopbut.text = 'Съёмка'
+            self.stopbut.text = 'Camera: OFF'
             self.cam.play = False
         else:
-            self.stopbut.text = 'Пауза'
+            self.stopbut.text = 'Camera: ON'
             self.cam.play = True
         togglflag = not togglflag
 
@@ -99,12 +99,12 @@ class MainScreen(BoxLayout):
         global togglcrypt
         if togglcrypt == False:
             togglcrypt = True
-            self.cyphbut.text = 'Шифрование Включено'
+            self.cyphbut.text = 'Encryption: ON'
         else:
             togglcrypt = False
-            self.cyphbut.text = 'Шифрование Выключено'
+            self.cyphbut.text = 'Encryption: OFF'
     def change_screen(self, *args):
-        """Переход на второй экран после сканирования"""
+        # Opening another screen after scanning
         main_app.sm.current = 'second'
 
 
@@ -120,20 +120,20 @@ class SecondScreen(BoxLayout):
         self.add_widget(self.but1)
 
     def open_browser(self, *args):
-        """Открытие ссылки в браузере"""
+        # Opening clear links in browser
         html_filename = "index.html"
         with open(html_filename, 'w+') as f:
             f.write(weblink)
             f.close()
         if togglcrypt == False:
             webbrowser.open(weblink)
-        else:
-            leb1 = Label(text='Название: ' + elements[0], size_hint_y=None, height='48dp', font_size='24dp')
-            leb2 = Label(text='Процессор: ' + elements[1], size_hint_y=None, height='48dp', font_size='24dp')
-            leb3 = Label(text='Дисплей: ' + elements[2], size_hint_y=None, height='48dp', font_size='24dp')
-            leb4 = Label(text='Оперативная память: ' + elements[3], size_hint_y=None, height='48dp', font_size='24dp')
-            leb5 = Label(text='Объём жесткого диска: ' + elements[4], size_hint_y=None, height='48dp', font_size='24dp')
-            leb6 = Label(text='Питание: ' + elements[5], size_hint_y=None, height='48dp', font_size='24dp')
+        else: # Opening encrypted text in the app
+            leb1 = Label(text='Name: ' + elements[0], size_hint_y=None, height='48dp', font_size='24dp')
+            leb2 = Label(text='Processor: ' + elements[1], size_hint_y=None, height='48dp', font_size='24dp')
+            leb3 = Label(text='Display: ' + elements[2], size_hint_y=None, height='48dp', font_size='24dp')
+            leb4 = Label(text='RAM: ' + elements[3], size_hint_y=None, height='48dp', font_size='24dp')
+            leb5 = Label(text='Size of HDD: ' + elements[4], size_hint_y=None, height='48dp', font_size='24dp')
+            leb6 = Label(text='Power: ' + elements[5], size_hint_y=None, height='48dp', font_size='24dp')
 
             self.add_widget(leb1)
             self.add_widget(leb2)
