@@ -86,8 +86,8 @@ I made 2 programms in pair: the qr-code scanner for Android and QR generator wic
 * But if you're scanning encrypted by *crypto.py* qr-code, then use 'Encryption: ON' mode.
 ## Contact
 * If you have any questions, feel free to reach out
-
    **Purtov Andrey**
+  
    **Email:** andrey.purtov10@gmail.com
 
 
