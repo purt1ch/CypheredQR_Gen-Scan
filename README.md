@@ -25,34 +25,35 @@ I made 2 programms in pair: the qr-code scanner for Android and QR generator wic
 <!--Installation-->
 # Installation
 * To get started with this repository, follow these steps
-## Generator PC intallation
+## QR_Gen PC intallation
 1. **Clone the Repository**: clone the repository to your local machine
     ```sh
         git clone https://github.com/purt1ch/CypheredQR_Gen-Scan.git
-        cd CypheredQR_Gen-Scan/QR_Gen
+        cd CypheredQR_Gen-Scan
     ```
-# Usage
-* Each directory is a standalone python project.
-## QR_Gen PC
-1. **Navigate to the Project directory**:
+2. **Navigate to the Project directory**:
     ```sh
-        cd basic-authentication
+        cd QR_gen
     ```
-2. **Create a Virtual Environment**: Ensure you have python and virtualenv installed. Create and activate a virtual environment
+3. **Create a Virtual Environment**: Ensure you have python and virtualenv installed. Create and activate a virtual environment
     ```sh
         python3 -m venv venv
         source venv/bin/activate
     ```
 
-3. **Install Dependencies**: Install the required dependencies from `requirements.txt`.
+4. **Install Dependencies**: Install the required dependencies from `requirements.txt`.
     ```sh
          pip install -r requirements.txt
     ```
-
-4. **Run the Application**:
+# Usage
+* Each directory is a standalone python project.
+## For QR_Gen PC:
+1. **Run the Application**:
     ```
         python3 CreatingQR_visual.py
     ```
+2. **Enter the parameters of your device and choose encryption mode**
+3. **Press CreateQR
 ## Android 
 * If you are scanning normal qr, not encrypted by the programm the botom button should show 'Шифрование выключено'.
 * But if you're scanning encrypted by *crypto.py* qr-code, then use 'Шифрование включено' mode. 
